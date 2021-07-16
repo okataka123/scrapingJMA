@@ -4,6 +4,8 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import timedelta
+import datetime as dt
+import os
 
 class JMAData:
     """
@@ -11,14 +13,32 @@ class JMAData:
         場所指定できるようにする。
         csvに落とせるようにする。
     """
-
     def __init__(self, startyear, startmonth, startday, endyear=None, endmonth=None, endday=None):
+        if endyear is None:
+            endyear = startyear
+        if endmonth is None:
+            endmonth = startmonth
+        if endday is None:
+            endday = startday
+
+        # T.B.D.
+        self.prec_str = ""
+        # T.B.D.
+        self.block_str = ""
+
         self.startDateTime = pd.to_datetime(str(startyear)+'/'+str(startmonth)+'/'+str(startday))
         self.endDateTime = pd.to_datetime(str(endyear)+'/'+str(endmonth)+'/'+str(endday))
         self.header = ['時刻', '現地気圧(hPa)', '海面気圧(hPa)', '降水量(mm)', '気温(℃)', '相対湿度(％)', '平均風速(m/s)', '平均風向', '最大瞬間風速(m/s)', '最大瞬間風向']
         self.jma_df = pd.DataFrame(columns=self.header)
-    
-    def locationcode(self):
+
+    def getlocationcode(self, prec_str, block_str):
+        """
+        Returns:
+            proc_no(int): T.B.D.
+            block_no(int): T.B.D.
+        Note:
+            別途Locationクラスを作る？
+        """
         pass
 
     def str2float(self, string):
@@ -98,14 +118,34 @@ class JMAData:
         self.jma_df.reset_index(inplace=True, drop=True)
         return self.jma_df
                 
-    def dumpcsv(self):
-        # jmacsvdumpedディレクトリを作る。 
-        # csvファイルの命名規則を考える。
-        pass
+    def dumpcsv(self, everydays=False):
+        """
+        # jmaData_shizuoka_shizuoka_20210701_20210701.csv
+        """
+        dumpdirname = 'csvout'
+        if not os.path.exists(dumpdirname):
+            os.mkdir(dumpdirname)
+        if not everydays:
+            startday_str = self.startDateTime.strftime('%Y%m%d')
+            endday_str = self.endDateTime.strftime('%Y%m%d')
+            #self.jma_df.to_csv(f'./csvout/jmaData_{}_{}_{startday_str}_{endday_str}.csv', index=False)
+            self.jma_df.to_csv(f'./csvout/jmaData_a_a_{startday_str}_{endday_str}.csv', index=False)
+        else:
+            datetime = self.startDateTime
+            while True:
+                if datetime == self.endDateTime+timedelta(days=1):
+                    break
+                day_str = datetime.strftime('%Y%m%d')
+                day_df = self.jma_df.loc[self.jma_df['時刻'].dt.date==datetime]
+                #day_df.to_csv(f'./csvout/jmaData_{}_{}_{day_str}_{day_str}.csv', index=False)
+                day_df.to_csv(f'./csvout/jmaData_a_a_{day_str}_{day_str}.csv', index=False)
+                datetime += timedelta(days=1)
 
 def main():
-    df = JMAData(2021, 7, 1, 2021, 7, 1).constructWeatherData()
-    print(df)
+    jma = JMAData(2021, 7, 1, 2021, 7, 5)
+    jma_df = jma.constructWeatherData()
+    #jma.dumpcsv()
+    jma.dumpcsv(everydays=True)
 
 if __name__ == '__main__':
     main()
