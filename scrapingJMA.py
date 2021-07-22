@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import timedelta
 import datetime as dt
-import os
+import os, sys
 from Location import *
 
 class JMAData:
@@ -32,10 +32,18 @@ class JMAData:
         self.prec_no, self.block_no = self.getlocationcode()
         self.startDateTime = pd.to_datetime(str(startyear)+'/'+str(startmonth)+'/'+str(startday))
         self.endDateTime = pd.to_datetime(str(endyear)+'/'+str(endmonth)+'/'+str(endday))
+        self.isVarid_specifiedDatetime(self.startDateTime, self.endDateTime)
         self.header = ['時刻', '現地気圧(hPa)', '海面気圧(hPa)', '降水量(mm)', '気温(℃)',  '相対湿度(％)',
             '平均風速(m/s)', '平均風向', '最大瞬間風速(m/s)', '最大瞬間風向',
         ]
         self.jma_df = pd.DataFrame(columns=self.header)
+
+    def isVarid_specifiedDatetime(self, sd, ed):
+        if sd > ed:
+            sys.exit('開始日時が終了日時よりも過去になっています。')
+        today = pd.to_datetime('today').date()
+        if sd >= today or ed >= today:
+            sys.exit('指定日時が現在よりも未来になっています。昨日までの日時を指定してください。')
 
     def getlocationcode(self):
         loc = Location(self.prec_str, self.block_str)

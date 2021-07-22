@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import re
+import sys
 
 class Location:
     def __init__(self, prec_str, block_str, fromcsv=True, fromweb=False):
@@ -71,6 +72,8 @@ class Location:
         """
         df = self.locations_df
         cond = df.loc[(df['prec'] == self.prec_str) & (df['block'] == self.block_str)].index
+        if cond.size == 0:
+            sys.exit('指定された地域の気象データは取得できません。')
         prec_no = df.loc[cond, 'prec_no'].values[0]
         block_no = df.loc[cond, 'block_no'].values[0]
         return prec_no, block_no
