@@ -1,6 +1,6 @@
 # scrapingJMA
 scrapingJMAとは、[気象庁のHP](https://www.jma.go.jp/jma/index.html)から指定した場所の過去の気象データ(10分間隔)を取得し、
-pandasのDataFrameに取り込んだり、csvファイルに落とすことができるツールです。
+pandasのDataFrameに取り込んだり、csvファイルに落とすことができるpython用ツールです。
 
 # 気象データについて
 
