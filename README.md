@@ -35,7 +35,7 @@ pandasのDataFrameやcsvファイルに落とすためのツールです。
 くらい。
 
 # How to use
-### pandas.DataFrameに落とす
+## pandas.DataFrameに落とす
 例えば、神奈川県横浜市の2021/07/01〜2021/07/05の気象データを取得する場合、
 ```python
 from scrapingJMA import *
@@ -52,11 +52,11 @@ jma = JMAData('神奈川県', '横浜', 2021, 7, 1) # 2021/07/01 の気象デー
 df = jma.constructWeatherData()
 ```
 
-### 地域の指定方法について
+## 地域の指定方法について
 気象データが取得可能な地域は`locationsTable.csv`の中に記載のある`prec`と`block`の組み合わせ限定となっています。
 `prec`の地域の文字列を`JMAData()`の第一引数に、`block`の地点の文字列を`JMAData()`の第二引数に指定すればOK！
 
-### csvファイルへのdump方法について
+## csvファイルへのdump方法について
 ```python
 jma.dumpcsv()
 ```
